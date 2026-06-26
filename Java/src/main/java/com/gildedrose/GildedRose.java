@@ -1,5 +1,7 @@
 package com.gildedrose;
 
+import java.util.Arrays;
+
 class GildedRose {
     Item[] items;
 
@@ -13,7 +15,7 @@ class GildedRose {
                     && !items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
                 if (items[i].quality > 0) {
                     if (!items[i].name.equals("Sulfuras, Hand of Ragnaros")) {
-                        items[i].quality = items[i].quality - 1;
+                        items[i].quality = items[i].name.startsWith("Conjured") ? items[i].quality - 2 : items[i].quality - 1;
                     }
                 }
             } else {
@@ -45,17 +47,22 @@ class GildedRose {
                     if (!items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
                         if (items[i].quality > 0) {
                             if (!items[i].name.equals("Sulfuras, Hand of Ragnaros")) {
-                                items[i].quality = items[i].quality - 1;
+                                items[i].quality = items[i].name.startsWith("Conjured") ? items[i].quality - 2 : items[i].quality - 1;
                             }
                         }
                     } else {
-                        items[i].quality = items[i].quality - items[i].quality;
+                        items[i].quality = 0;
                     }
                 } else {
                     if (items[i].quality < 50) {
                         items[i].quality = items[i].quality + 1;
                     }
                 }
+            }
+
+            // Ensure quality does not go below 0
+            if (items[i].quality < 0) {
+                items[i].quality = 0;
             }
         }
     }

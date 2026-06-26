@@ -14,14 +14,19 @@ dependencies {
 
 group = 'com.gildedrose'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 test {
     useJUnitPlatform()
 }
 
 task texttest(type: JavaExec) {
-    main = "com.gildedrose.TexttestFixture"
+    mainClass = "com.gildedrose.TexttestFixture"
     classpath = sourceSets.test.runtimeClasspath
     args "30"
 }

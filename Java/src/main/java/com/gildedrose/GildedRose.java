@@ -25,38 +25,28 @@ class GildedRose {
             return; // legendary: sellIn and quality never change
         }
 
-        applyDailyChange(item, item.sellIn);
+        switch (item.name) {
+            case AGED_BRIE -> increase(item, 1);
+            case BACKSTAGE -> {
+                increase(item, 1);
+                if (item.sellIn < 11) {
+                    increase(item, 1);
+                }
+                if (item.sellIn < 6) {
+                    increase(item, 1);
+                }
+            }
+            default -> decrease(item, degradeRate(item));
+        }
 
         item.sellIn--;
 
         if (item.sellIn < 0) {
-            applyExpiredChange(item);
-        }
-    }
-
-    private void applyDailyChange(Item item, int sellIn) {
-        if (item.name.equals(AGED_BRIE)) {
-            increase(item, 1);
-        } else if (item.name.equals(BACKSTAGE)) {
-            increase(item, 1);
-            if (sellIn < 11) {
-                increase(item, 1);
+            switch (item.name) {
+                case AGED_BRIE -> increase(item, 1);
+                case BACKSTAGE -> item.quality = MIN_QUALITY;
+                default -> decrease(item, degradeRate(item));
             }
-            if (sellIn < 6) {
-                increase(item, 1);
-            }
-        } else {
-            decrease(item, degradeRate(item));
-        }
-    }
-
-    private void applyExpiredChange(Item item) {
-        if (item.name.equals(AGED_BRIE)) {
-            increase(item, 1);
-        } else if (item.name.equals(BACKSTAGE)) {
-            item.quality = MIN_QUALITY;
-        } else {
-            decrease(item, degradeRate(item));
         }
     }
 

@@ -11,7 +11,7 @@ class GildedRoseTest {
         Item[] items = new Item[] { new Item("foo", 0, 0) };
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        assertEquals("fixme", app.items[0].name);
+        assertEquals("foo", app.items[0].name);
     }
 
     @Test
@@ -127,8 +127,7 @@ class GildedRoseTest {
         Item[] items = new Item[] { new Item("Conjured Mana Cake", 3, 6) };
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // Current code does not handle Conjured specially; it degrades by 1
-        assertEquals(5, app.items[0].quality);
+        assertEquals(4, app.items[0].quality);
         assertEquals(2, app.items[0].sellIn);
     }
 
@@ -137,8 +136,7 @@ class GildedRoseTest {
         Item[] items = new Item[] { new Item("Conjured Mana Cake", 0, 10) };
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // Current code after sellIn: normal item degrades by 2, so 8. But we want Conjured to degrade by 4? Let's compute: current: quality 10, sellIn 0 => quality-1=9, sellIn -1, then past sellIn -> quality-1=8. So expected 8.
-        assertEquals(8, app.items[0].quality);
+        assertEquals(6, app.items[0].quality);
         assertEquals(-1, app.items[0].sellIn);
     }
 
@@ -147,7 +145,6 @@ class GildedRoseTest {
         Item[] items = new Item[] { new Item("Conjured Mana Cake", 0, 1) };
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // Current: quality 1 -> -1? Actually quality>0 so minus 1: quality 0, sellIn -1, past sellIn -> quality 0>0? no, so stays 0. So expected 0.
         assertEquals(0, app.items[0].quality);
         assertEquals(-1, app.items[0].sellIn);
     }

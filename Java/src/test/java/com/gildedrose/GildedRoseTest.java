@@ -36,10 +36,6 @@ class GildedRoseTest {
 
     @Test
     void should_degrade_by_4_when_conjured_after_sellIn_with_quality_10() {
-        // This test FAILS because the current code does not implement Conjured correctly.
-        // Expected: Conjured item with sellIn=0, quality=10 should degrade by 2 before sellIn (10->8),
-        // then sellIn becomes -1, then after-sellIn degradation applies rate 2 again (8->6),
-        // total drop 4, so quality = 6.
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
         GildedRose app = new GildedRose(items);
         app.updateQuality();
@@ -148,10 +144,6 @@ class GildedRoseTest {
     // ========== NEW Failing Test: Conjured item after sellIn with rate change ==========
     @Test
     void should_degrade_by_4_when_conjured_after_sellIn() {
-        // This test FAILS because the current code does not implement Conjured correctly.
-        // Expected: Conjured item with sellIn=0, quality=10 should degrade by 2 before sellIn (10->8),
-        // then sellIn becomes -1, then after-sellIn degradation applies rate 2 again (8->6),
-        // total drop 4, so quality = 6.
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
         GildedRose app = new GildedRose(items);
         app.updateQuality();

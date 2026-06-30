@@ -150,8 +150,8 @@ class GildedRoseTest {
         // quality before sellIn decrement: 10 -> 9 (since not Aged Brie/Backstage)
         // sellIn: 0 -> -1
         // sellIn < 0: item name not Aged Brie, not Backstage, quality > 0, not Sulfuras -> quality -1: 9 -> 8
-        // expected = 8 (current behavior, not 6)
-        assertEquals(8, items[0].quality);
+        // expected = 6 (refactored behavior: Conjured items degrade 2 before sellIn and 4 after)
+        assertEquals(6, items[0].quality);
     }
 
     // Conjured quality never below 0

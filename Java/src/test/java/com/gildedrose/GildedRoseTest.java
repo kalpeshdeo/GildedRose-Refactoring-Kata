@@ -22,7 +22,6 @@ class GildedRoseTest {
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // Expected: after sellIn (0 -> -1), quality drops by 2 first, then by another 2 (total 4): 10 - 2 - 2 = 6
         assertEquals(6, app.items[0].quality);
         assertEquals(-1, app.items[0].sellIn);
     }
@@ -32,8 +31,20 @@ class GildedRoseTest {
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 1)};
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // After sellIn, quality drops by 4 but floor is 0
         assertEquals(0, app.items[0].quality);
+    }
+
+    @Test
+    void should_degrade_by_4_when_conjured_after_sellIn_with_quality_10() {
+        // This test FAILS because the current code does not implement Conjured correctly.
+        // Expected: Conjured item with sellIn=0, quality=10 should degrade by 2 before sellIn (10->8),
+        // then sellIn becomes -1, then after-sellIn degradation applies rate 2 again (8->6),
+        // total drop 4, so quality = 6.
+        Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();
+        assertEquals(6, app.items[0].quality);
+        assertEquals(-1, app.items[0].sellIn);
     }
 
     // ========== Characterization tests (existing behavior, all pass) ==========

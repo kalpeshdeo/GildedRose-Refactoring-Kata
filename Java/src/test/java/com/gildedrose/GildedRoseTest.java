@@ -17,6 +17,23 @@ class GildedRoseTest {
         assertEquals(4, app.items[0].sellIn);
     }
 
+    @Test
+    void should_degrade_by_4_after_sellIn_when_conjured() {
+        Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();
+        assertEquals(6, app.items[0].quality);
+        assertEquals(-1, app.items[0].sellIn);
+    }
+
+    @Test
+    void should_not_degrade_below_0_when_conjured() {
+        Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 1)};
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();
+        assertEquals(0, app.items[0].quality);
+    }
+
     // ========== Characterization tests (existing behavior, all pass) ==========
 
     private Item updateOnce(Item item) {

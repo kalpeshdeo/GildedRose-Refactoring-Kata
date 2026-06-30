@@ -146,11 +146,6 @@ class GildedRoseTest {
         Item[] items = new Item[]{new Item("Conjured Mana Cake", 0, 10)};
         GildedRose app = new GildedRose(items);
         app.updateQuality();
-        // existing code: not a special item, so path for normal item before sellIn with quality > 0 && not Sulfuras -> quality -1
-        // quality before sellIn decrement: 10 -> 9 (since not Aged Brie/Backstage)
-        // sellIn: 0 -> -1
-        // sellIn < 0: item name not Aged Brie, not Backstage, quality > 0, not Sulfuras -> quality -1: 9 -> 8
-        // expected = 6 (refactored behavior: Conjured items degrade 2 before sellIn and 4 after)
         assertEquals(6, items[0].quality);
     }
 

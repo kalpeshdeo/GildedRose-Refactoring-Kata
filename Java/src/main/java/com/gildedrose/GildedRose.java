@@ -18,15 +18,15 @@ class GildedRose {
     public void updateQuality() {
         for (int i = 0; i < items.length; i++) {
             Item item = items[i];
-            if (item.name.equals(SULFURAS)) {
+            if (item.name.equals(SULFURAS)) {  // guard: Sulfuras never changes
                 continue;
             }
             item.sellIn = item.sellIn - 1;
             if (item.name.equals(AGED_BRIE)) {
-                increase(item, item.sellIn < 0 ? 2 : 1);
+                increase(item, item.sellIn < 0 ? 2 : 1);  // guard: quality capped at 50 via increase()
             } else if (item.name.equals(BACKSTAGE)) {
                 if (item.sellIn < 0) {
-                    item.quality = 0;
+                    item.quality = 0;  // guard: drops to zero after concert
                 } else {
                     int rate = 1;
                     if (item.sellIn < 5) {
@@ -34,14 +34,14 @@ class GildedRose {
                     } else if (item.sellIn < 10) {
                         rate = 2;
                     }
-                    increase(item, rate);
+                    increase(item, rate);  // guard: quality capped at 50 via increase()
                 }
             } else {
                 int rate = degradeRate(item.name);
                 if (item.sellIn < 0) {
-                    rate *= 2;
+                    rate *= 2;  // guard: double degradation after sellIn
                 }
-                decrease(item, rate);
+                decrease(item, rate);  // guard: quality floored at 0 via decrease()
             }
         }
     }
@@ -51,10 +51,10 @@ class GildedRose {
     }
 
     private void increase(Item item, int amount) {
-        item.quality = Math.min(MAX_QUALITY, item.quality + amount);
+        item.quality = Math.min(MAX_QUALITY, item.quality + amount);  // guard: never above max
     }
 
     private void decrease(Item item, int amount) {
-        item.quality = Math.max(MIN_QUALITY, item.quality - amount);
+        item.quality = Math.max(MIN_QUALITY, item.quality - amount);  // guard: never below min
     }
 }

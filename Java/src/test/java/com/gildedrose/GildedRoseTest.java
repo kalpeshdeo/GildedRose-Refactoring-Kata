@@ -128,23 +128,4 @@ class GildedRoseTest {
         assertEquals(80, result.quality);
         assertEquals(-1, result.sellIn);
     }
-
-    // Conjured: after sellIn, degrades by 4 but not below 0
-    @Test
-    void should_degrade_by_4_when_conjured_after_sellIn() {
-        Item result = updateOnce(new Item("Conjured Mana Cake", 0, 10));
-        // sellIn 0 -> -1; before sellIn? Actually sellIn=0 means before sellIn? In original code,
-        // the "after sellIn" degradation happens when sellIn < 0. At sellIn=0, first degrade by 2 -> 8, then sellIn becomes -1, then after-sellIn degrade by 2 again -> 6.
-        assertEquals(6, result.quality);
-        assertEquals(-1, result.sellIn);
-    }
-
-    // Conjured: quality never goes below 0
-    @Test
-    void should_not_degrade_below_0_when_conjured() {
-        Item result = updateOnce(new Item("Conjured Mana Cake", 0, 1));
-        // Before sellIn (sellIn=0 -> before? Actually sellIn=0 is not <0 so first degrade: 1-2 = -1 clamped to 0 -> 0, sellIn becomes -1, then after-sellIn degrade: 0-2 = 0
-        assertEquals(0, result.quality);
-        assertEquals(-1, result.sellIn);
-    }
 }

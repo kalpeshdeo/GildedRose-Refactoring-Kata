@@ -6,14 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GildedRoseTest {
 
-    // Helper: build one item, run one update cycle, return the item
     private Item updateOne(String name, int sellIn, int quality) {
         Item[] items = new Item[]{new Item(name, sellIn, quality)};
         new GildedRose(items).updateQuality();
         return items[0];
     }
-
-    // ---- Characterization tests for EXISTING behavior ----
 
     @Test
     void should_degrade_quality_by_one_for_normal_item_before_sellIn() {
@@ -101,13 +98,27 @@ class GildedRoseTest {
         assertEquals(9, result.sellIn);
     }
 
-    // ---- New FAILING test for Conjured items behavior ----
-
     @Test
     void should_degrade_conjured_quality_by_two_before_sellIn() {
-        // This test expects the NEW behavior (Conjured items degrade twice as fast)
-        // Current code degrades by 1, so this will fail until the feature is implemented
         Item result = updateOne("Conjured Mana Cake", 5, 10);
         assertEquals(8, result.quality);
+    }
+
+    @Test
+    void should_degrade_conjured_quality_by_four_after_sellIn() {
+        Item result = updateOne("Conjured Mana Cake", 0, 10);
+        assertEquals(6, result.quality);
+    }
+
+    @Test
+    void should_not_let_conjured_quality_go_below_zero_before_sellIn() {
+        Item result = updateOne("Conjured Mana Cake", 5, 1);
+        assertEquals(0, result.quality);
+    }
+
+    @Test
+    void should_not_let_conjured_quality_go_below_zero_after_sellIn() {
+        Item result = updateOne("Conjured Mana Cake", 0, 3);
+        assertEquals(0, result.quality);
     }
 }

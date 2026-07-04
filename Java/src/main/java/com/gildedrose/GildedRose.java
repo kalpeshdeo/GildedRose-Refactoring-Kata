@@ -8,28 +8,20 @@ class GildedRose {
     }
 
     public void updateQuality() {
-        for (int i = 0; i < items.length; i++) {
-            updateItem(items[i]);
+        for (Item item : items) {
+            if (!isLegendary(item)) {
+                updateQualityBeforeExpiration(item);
+                updateSellIn(item);
+                updateQualityAfterExpiration(item);
+            }
         }
-    }
-
-    private void updateItem(Item item) {
-        if (isLegendary(item)) {
-            return;
-        }
-
-        updateQualityBeforeExpiration(item);
-        updateSellIn(item);
-        updateQualityAfterExpiration(item);
     }
 
     private boolean isLegendary(Item item) {
-        String name = item.name;
-        return name.equals("Sulfuras, Hand of Ragnaros");
+        return "Sulfuras, Hand of Ragnaros".equals(item.name);
     }
 
     private void updateQualityBeforeExpiration(Item item) {
-        String name = item.name;
         if (isAgedBrie(item) || isBackstagePass(item)) {
             increaseQuality(item);
             if (isBackstagePass(item)) {
@@ -46,18 +38,15 @@ class GildedRose {
     }
 
     private boolean isConjured(Item item) {
-        String name = item.name;
-        return name.equals("Conjured Mana Cake");
+        return item.name != null && item.name.startsWith("Conjured");
     }
 
     private boolean isAgedBrie(Item item) {
-        String name = item.name;
-        return name.equals("Aged Brie");
+        return "Aged Brie".equals(item.name);
     }
 
     private boolean isBackstagePass(Item item) {
-        String name = item.name;
-        return name.equals("Backstage passes to a TAFKAL80ETC concert");
+        return "Backstage passes to a TAFKAL80ETC concert".equals(item.name);
     }
 
     private void increaseQuality(Item item) {
@@ -76,7 +65,6 @@ class GildedRose {
 
     private void updateQualityAfterExpiration(Item item) {
         if (item.sellIn < 0) {
-            String name = item.name;
             if (isAgedBrie(item)) {
                 increaseQuality(item);
             } else if (isBackstagePass(item)) {

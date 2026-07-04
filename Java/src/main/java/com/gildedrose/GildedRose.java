@@ -9,44 +9,80 @@ class GildedRose {
 
     public void updateQuality() {
         for (int i = 0; i < items.length; i++) {
-            String name = items[i].name;
-            if (name.equals("Sulfuras, Hand of Ragnaros")) {
-                continue;
-            }
+            updateItem(items[i]);
+        }
+    }
 
-            int qualityChange = 1;
-            if (name.equals("Conjured Mana Cake")) {
-                qualityChange = 2;
-            }
+    private void updateItem(Item item) {
+        if (isLegendary(item)) {
+            return;
+        }
 
-            if (name.equals("Aged Brie") || name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                if (items[i].quality < 50) {
-                    items[i].quality++;
-                }
-                if (name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                    if (items[i].sellIn < 11 && items[i].quality < 50) {
-                        items[i].quality++;
-                    }
-                    if (items[i].sellIn < 6 && items[i].quality < 50) {
-                        items[i].quality++;
-                    }
-                }
+        updateQualityBeforeExpiration(item);
+        updateSellIn(item);
+        updateQualityAfterExpiration(item);
+    }
+
+    private boolean isLegendary(Item item) {
+        String name = item.name;
+        return name.equals("Sulfuras, Hand of Ragnaros");
+    }
+
+    private void updateQualityBeforeExpiration(Item item) {
+        String name = item.name;
+        if (isAgedBrie(item) || isBackstagePass(item)) {
+            increaseQuality(item);
+            if (isBackstagePass(item)) {
+                if (item.sellIn < 11) increaseQuality(item);
+                if (item.sellIn < 6) increaseQuality(item);
+            }
+        } else {
+            decreaseQuality(item, getQualityDegradationRate(item));
+        }
+    }
+
+    private int getQualityDegradationRate(Item item) {
+        return isConjured(item) ? 2 : 1;
+    }
+
+    private boolean isConjured(Item item) {
+        String name = item.name;
+        return name.equals("Conjured Mana Cake");
+    }
+
+    private boolean isAgedBrie(Item item) {
+        String name = item.name;
+        return name.equals("Aged Brie");
+    }
+
+    private boolean isBackstagePass(Item item) {
+        String name = item.name;
+        return name.equals("Backstage passes to a TAFKAL80ETC concert");
+    }
+
+    private void increaseQuality(Item item) {
+        if (item.quality < 50) {
+            item.quality++;
+        }
+    }
+
+    private void decreaseQuality(Item item, int amount) {
+        item.quality = Math.max(0, item.quality - amount);
+    }
+
+    private void updateSellIn(Item item) {
+        item.sellIn--;
+    }
+
+    private void updateQualityAfterExpiration(Item item) {
+        if (item.sellIn < 0) {
+            String name = item.name;
+            if (isAgedBrie(item)) {
+                increaseQuality(item);
+            } else if (isBackstagePass(item)) {
+                item.quality = 0;
             } else {
-                items[i].quality = Math.max(0, items[i].quality - qualityChange);
-            }
-
-            items[i].sellIn--;
-
-            if (items[i].sellIn < 0) {
-                if (name.equals("Aged Brie")) {
-                    if (items[i].quality < 50) {
-                        items[i].quality++;
-                    }
-                } else if (name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                    items[i].quality = 0;
-                } else {
-                    items[i].quality = Math.max(0, items[i].quality - qualityChange);
-                }
+                decreaseQuality(item, getQualityDegradationRate(item));
             }
         }
     }

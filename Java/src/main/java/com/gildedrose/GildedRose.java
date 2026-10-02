@@ -88,7 +88,7 @@ class GildedRose {
         return BACKSTAGE_PASSES.equals(item.name);
     }
 
-    private boolean isConjured(Item item) {
-        return item.name.startsWith(CONJURED_PREFIX);
+        private boolean isConjured(Item item) {
+        return item.name != null && item.name.startsWith(CONJURED_PREFIX);
     }
 }

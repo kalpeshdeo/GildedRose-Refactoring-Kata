@@ -1,7 +1,7 @@
 package com.gildedrose;
 
 class GildedRose {
-    private static final String CONJURED_PREFIX = "Conjured";
+    private static final String CONJURED_PREFIX = "Conjured ";
     private static final int MIN_QUALITY = 0;
     private static final int CONJURED_DEGRADE_RATE = 2;
     private static final int EXPIRED_MULTIPLIER = 2;

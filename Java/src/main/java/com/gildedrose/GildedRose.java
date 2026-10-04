@@ -70,10 +70,8 @@ class GildedRose {
         }
     }
 
-        private static boolean isConjured(Item item) {
-        return item.name != null
-                && item.name.startsWith(CONJURED_PREFIX)
-                && !item.name.equals("Sulfuras, Hand of Ragnaros");
+    private static boolean isConjured(Item item) {
+        return item.name != null && item.name.startsWith(CONJURED_PREFIX);
     }
 
     private static void updateConjured(Item item) {

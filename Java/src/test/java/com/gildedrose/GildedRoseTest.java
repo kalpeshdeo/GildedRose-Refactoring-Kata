@@ -55,6 +55,12 @@ class GildedRoseTest {
     }
 
     @Test
+    void name_that_merely_starts_with_conjured_is_a_normal_item() {
+        Item item = update("Conjuredish Cloak", 5, 10);
+        assertEquals(9, item.quality);
+    }
+
+    @Test
     void conjured_zero_quality_stays_zero() {
         assertEquals(0, update(CONJURED, 5, 0).quality);
         assertEquals(0, update(CONJURED, 0, 0).quality);

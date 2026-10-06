@@ -8,6 +8,8 @@ class GildedRose {
 
     private static final int MIN_QUALITY = 0;
     private static final int MAX_QUALITY = 50;
+    private static final int NORMAL_DEGRADE_RATE = 1;
+    private static final int CONJURED_DEGRADE_RATE = 2;
     private static final int PASSES_DOUBLE_RATE_BELOW = 11;
     private static final int PASSES_TRIPLE_RATE_BELOW = 6;
 
@@ -30,34 +32,54 @@ class GildedRose {
 
         switch (item.name) {
             case BRIE:
-                increaseQuality(item);
-                item.sellIn--;
-                if (isExpired(item)) {
-                    increaseQuality(item);
-                }
+                updateBrie(item);
                 break;
             case PASSES:
-                increaseQuality(item);
-                if (item.quality < MAX_QUALITY + 1 && item.sellIn < PASSES_DOUBLE_RATE_BELOW) {
-                    increaseQuality(item);
-                }
-                if (item.sellIn < PASSES_TRIPLE_RATE_BELOW) {
-                    increaseQuality(item);
-                }
-                item.sellIn--;
-                if (isExpired(item)) {
-                    item.quality = MIN_QUALITY;
-                }
+                updatePasses(item);
                 break;
             default:
-                int rate = item.name.startsWith(CONJURED_PREFIX) ? 2 : 1;
-                decreaseQuality(item, rate);
-                item.sellIn--;
-                if (isExpired(item)) {
-                    decreaseQuality(item, rate);
-                }
+                updateNormal(item);
                 break;
         }
+    }
+
+    private static void updateBrie(Item item) {
+        increaseQuality(item);
+        item.sellIn--;
+        if (isExpired(item)) {
+            increaseQuality(item);
+        }
+    }
+
+    private static void updatePasses(Item item) {
+        increaseQuality(item);
+        if (item.sellIn < PASSES_DOUBLE_RATE_BELOW) {
+            increaseQuality(item);
+        }
+        if (item.sellIn < PASSES_TRIPLE_RATE_BELOW) {
+            increaseQuality(item);
+        }
+        item.sellIn--;
+        if (isExpired(item)) {
+            item.quality = MIN_QUALITY;
+        }
+    }
+
+    private static void updateNormal(Item item) {
+        int rate = degradeRate(item);
+        decreaseQuality(item, rate);
+        item.sellIn--;
+        if (isExpired(item)) {
+            decreaseQuality(item, rate);
+        }
+    }
+
+    private static int degradeRate(Item item) {
+        return isConjured(item) ? CONJURED_DEGRADE_RATE : NORMAL_DEGRADE_RATE;
+    }
+
+    private static boolean isConjured(Item item) {
+        return item.name.startsWith(CONJURED_PREFIX);
     }
 
     private static boolean isExpired(Item item) {
@@ -71,6 +93,8 @@ class GildedRose {
     }
 
     private static void decreaseQuality(Item item, int amount) {
-        item.quality = Math.max(MIN_QUALITY, item.quality - amount);
+        if (item.quality > MIN_QUALITY) {
+            item.quality = Math.max(MIN_QUALITY, item.quality - amount);
+        }
     }
 }

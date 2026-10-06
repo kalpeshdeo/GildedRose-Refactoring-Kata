@@ -25,7 +25,10 @@ class GildedRose {
         }
     }
 
-    private void updateItem(Item item) {
+        private void updateItem(Item item) {
+        if (item == null || item.name == null) {
+            return;
+        }
         if (item.name.equals(SULFURAS)) {
             return;
         }

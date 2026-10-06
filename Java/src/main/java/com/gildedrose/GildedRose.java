@@ -10,8 +10,8 @@ class GildedRose {
     private static final int MAX_QUALITY = 50;
     private static final int NORMAL_DEGRADE_RATE = 1;
     private static final int CONJURED_DEGRADE_RATE = 2;
-    private static final int PASSES_DOUBLE_RATE_BELOW = 11;
-    private static final int PASSES_TRIPLE_RATE_BELOW = 6;
+    private static final int PASSES_DOUBLE_RATE_MAX_DAYS_LEFT = 10;
+    private static final int PASSES_TRIPLE_RATE_MAX_DAYS_LEFT = 5;
 
     Item[] items;
 
@@ -25,15 +25,15 @@ class GildedRose {
         }
     }
 
-        private void updateItem(Item item) {
+    private void updateItem(Item item) {
         if (item == null || item.name == null) {
-            return;
-        }
-        if (item.name.equals(SULFURAS)) {
             return;
         }
 
         switch (item.name) {
+            case SULFURAS:
+                // Legendary: never sold, never changes.
+                break;
             case BRIE:
                 updateBrie(item);
                 break;
@@ -56,10 +56,10 @@ class GildedRose {
 
     private static void updatePasses(Item item) {
         increaseQuality(item);
-        if (item.sellIn < PASSES_DOUBLE_RATE_BELOW) {
+        if (item.sellIn <= PASSES_DOUBLE_RATE_MAX_DAYS_LEFT) {
             increaseQuality(item);
         }
-        if (item.sellIn < PASSES_TRIPLE_RATE_BELOW) {
+        if (item.sellIn <= PASSES_TRIPLE_RATE_MAX_DAYS_LEFT) {
             increaseQuality(item);
         }
         item.sellIn--;

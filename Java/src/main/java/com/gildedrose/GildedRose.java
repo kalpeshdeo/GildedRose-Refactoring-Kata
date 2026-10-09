@@ -8,8 +8,16 @@ class GildedRose {
 
     private static final int MIN_QUALITY = 0;
     private static final int MAX_QUALITY = 50;
-    private static final int PASS_DOUBLE_RATE_DAYS = 11;
-    private static final int PASS_TRIPLE_RATE_DAYS = 6;
+
+    /** Pass quality rises by an extra point when sellIn is strictly below this. */
+    private static final int PASS_DOUBLE_RATE_BELOW_DAYS = 11;
+    /** Pass quality rises by another extra point when sellIn is strictly below this. */
+    private static final int PASS_TRIPLE_RATE_BELOW_DAYS = 6;
+
+    private static final int BRIE_INCREMENT = 1;
+    private static final int BASE_PASS_INCREMENT = 1;
+    private static final int NORMAL_DEGRADATION = 1;
+    private static final int CONJURED_DEGRADATION = 2 * NORMAL_DEGRADATION;
 
     Item[] items;
 
@@ -24,53 +32,73 @@ class GildedRose {
     }
 
     private void updateItem(Item item) {
-        if (SULFURAS.equals(item.name)) {
+        if (isSulfuras(item)) {
             return;
         }
 
-        updateQualityBeforeSellDateChange(item);
+        applyDailyChange(item);
         item.sellIn = item.sellIn - 1;
-        if (item.sellIn < 0) {
-            updateExpiredQuality(item);
+        if (isExpired(item)) {
+            applyExpiredChange(item);
         }
     }
 
-    private void updateQualityBeforeSellDateChange(Item item) {
+    private boolean isSulfuras(Item item) {
+        return SULFURAS.equals(item.name);
+    }
+
+    private boolean isExpired(Item item) {
+        return item.sellIn < 0;
+    }
+
+    private void applyDailyChange(Item item) {
         if (AGED_BRIE.equals(item.name)) {
-            changeQuality(item, 1);
+            increaseQuality(item, BRIE_INCREMENT);
         } else if (BACKSTAGE_PASS.equals(item.name)) {
-            changeQuality(item, passIncrement(item.sellIn));
+            increaseQuality(item, passIncrement(item.sellIn));
         } else {
-            changeQuality(item, -degradationRate(item));
+            decreaseQuality(item, degradationRate(item));
         }
     }
 
-    private void updateExpiredQuality(Item item) {
+    private void applyExpiredChange(Item item) {
         if (AGED_BRIE.equals(item.name)) {
-            changeQuality(item, 1);
+            increaseQuality(item, BRIE_INCREMENT);
         } else if (BACKSTAGE_PASS.equals(item.name)) {
             item.quality = MIN_QUALITY;
         } else {
-            changeQuality(item, -degradationRate(item));
+            decreaseQuality(item, degradationRate(item));
         }
     }
 
     private int passIncrement(int sellIn) {
-        int increment = 1;
-        if (sellIn < PASS_DOUBLE_RATE_DAYS) {
+        int increment = BASE_PASS_INCREMENT;
+        if (sellIn < PASS_DOUBLE_RATE_BELOW_DAYS) {
             increment++;
         }
-        if (sellIn < PASS_TRIPLE_RATE_DAYS) {
+        if (sellIn < PASS_TRIPLE_RATE_BELOW_DAYS) {
             increment++;
         }
         return increment;
     }
 
     private int degradationRate(Item item) {
-        return item.name.startsWith(CONJURED_PREFIX) ? 2 : 1;
+        return isConjured(item) ? CONJURED_DEGRADATION : NORMAL_DEGRADATION;
     }
 
-    private void changeQuality(Item item, int delta) {
-        item.quality = Math.max(MIN_QUALITY, Math.min(MAX_QUALITY, item.quality + delta));
+    private boolean isConjured(Item item) {
+        return item.name != null && item.name.startsWith(CONJURED_PREFIX);
+    }
+
+    private void increaseQuality(Item item, int amount) {
+        if (item.quality < MAX_QUALITY) {
+            item.quality = Math.min(MAX_QUALITY, item.quality + amount);
+        }
+    }
+
+    private void decreaseQuality(Item item, int amount) {
+        if (item.quality > MIN_QUALITY) {
+            item.quality = Math.max(MIN_QUALITY, item.quality - amount);
+        }
     }
 }

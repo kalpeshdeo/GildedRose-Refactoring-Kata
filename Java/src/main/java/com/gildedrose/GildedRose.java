@@ -86,13 +86,13 @@ class GildedRose {
         return isConjured(item) ? CONJURED_DEGRADATION : NORMAL_DEGRADATION;
     }
 
-    private boolean isConjured(Item item) {
+        private boolean isConjured(Item item) {
         return item.name != null && item.name.startsWith(CONJURED_PREFIX);
     }
 
-    private void increaseQuality(Item item, int amount) {
+        private void increaseQuality(Item item, int amount) {
         if (item.quality < MAX_QUALITY) {
-            item.quality = Math.min(MAX_QUALITY, item.quality + amount);
+            item.quality = (int) Math.min((long) MAX_QUALITY, (long) item.quality + amount);
         }
     }
 

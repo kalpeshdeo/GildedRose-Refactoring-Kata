@@ -8,8 +8,16 @@ class GildedRose {
 
     private static final int MIN_QUALITY = 0;
     private static final int MAX_QUALITY = 50;
+
+    private static final int NORMAL_DEGRADE_RATE = 1;
+    private static final int CONJURED_DEGRADE_RATE = 2 * NORMAL_DEGRADE_RATE;
+    private static final int BRIE_INCREMENT = 1;
+
     private static final int PASSES_DOUBLE_THRESHOLD = 11;
     private static final int PASSES_TRIPLE_THRESHOLD = 6;
+    private static final int PASSES_DEFAULT_INCREMENT = 1;
+    private static final int PASSES_DOUBLE_INCREMENT = 2;
+    private static final int PASSES_TRIPLE_INCREMENT = 3;
 
     Item[] items;
 
@@ -24,21 +32,33 @@ class GildedRose {
     }
 
     private void updateItem(Item item) {
-        if (SULFURAS.equals(item.name)) {
+        if (isLegendary(item)) {
             return;
         }
 
-        ageDaily(item);
+        applyDailyChange(item);
         item.sellIn--;
-        if (item.sellIn < 0) {
-            applyExpiry(item);
+        if (isExpired(item)) {
+            applyExpiryChange(item);
         }
     }
 
-    private void ageDaily(Item item) {
+    private boolean isLegendary(Item item) {
+        return SULFURAS.equals(item.name);
+    }
+
+    private boolean isExpired(Item item) {
+        return item.sellIn < 0;
+    }
+
+    private boolean isConjured(Item item) {
+        return item.name.startsWith(CONJURED_PREFIX);
+    }
+
+    private void applyDailyChange(Item item) {
         switch (item.name) {
             case AGED_BRIE:
-                increaseQuality(item, 1);
+                increaseQuality(item, BRIE_INCREMENT);
                 break;
             case BACKSTAGE_PASSES:
                 increaseQuality(item, passesIncrement(item.sellIn));
@@ -48,10 +68,10 @@ class GildedRose {
         }
     }
 
-    private void applyExpiry(Item item) {
+    private void applyExpiryChange(Item item) {
         switch (item.name) {
             case AGED_BRIE:
-                increaseQuality(item, 1);
+                increaseQuality(item, BRIE_INCREMENT);
                 break;
             case BACKSTAGE_PASSES:
                 item.quality = MIN_QUALITY;
@@ -63,16 +83,16 @@ class GildedRose {
 
     private int passesIncrement(int sellIn) {
         if (sellIn < PASSES_TRIPLE_THRESHOLD) {
-            return 3;
+            return PASSES_TRIPLE_INCREMENT;
         }
         if (sellIn < PASSES_DOUBLE_THRESHOLD) {
-            return 2;
+            return PASSES_DOUBLE_INCREMENT;
         }
-        return 1;
+        return PASSES_DEFAULT_INCREMENT;
     }
 
     private int degradeRate(Item item) {
-        return item.name.startsWith(CONJURED_PREFIX) ? 2 : 1;
+        return isConjured(item) ? CONJURED_DEGRADE_RATE : NORMAL_DEGRADE_RATE;
     }
 
     private void increaseQuality(Item item, int amount) {

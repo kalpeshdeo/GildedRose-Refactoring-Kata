@@ -31,18 +31,20 @@ class GildedRose {
         }
     }
 
-        private void updateItem(Item item) {
-        if (item == null || item.name == null || isLegendary(item)) {
+    private void updateItem(Item item) {
+        if (isMalformed(item) || isLegendary(item)) {
             return;
         }
 
-        applyDailyChange(item);
-        if (item.sellIn > Integer.MIN_VALUE) {
-            item.sellIn--;
-        }
+        applyQualityRule(item, false);
+        ageOneDay(item);
         if (isExpired(item)) {
-            applyExpiryChange(item);
+            applyQualityRule(item, true);
         }
+    }
+
+    private boolean isMalformed(Item item) {
+        return item == null || item.name == null;
     }
 
     private boolean isLegendary(Item item) {
@@ -57,26 +59,24 @@ class GildedRose {
         return item.name.startsWith(CONJURED_PREFIX);
     }
 
-    private void applyDailyChange(Item item) {
-        switch (item.name) {
-            case AGED_BRIE:
-                increaseQuality(item, BRIE_INCREMENT);
-                break;
-            case BACKSTAGE_PASSES:
-                increaseQuality(item, passesIncrement(item.sellIn));
-                break;
-            default:
-                decreaseQuality(item, degradeRate(item));
+    /** Decrements sellIn, never wrapping around below Integer.MIN_VALUE. */
+    private void ageOneDay(Item item) {
+        if (item.sellIn > Integer.MIN_VALUE) {
+            item.sellIn--;
         }
     }
 
-    private void applyExpiryChange(Item item) {
+    private void applyQualityRule(Item item, boolean expired) {
         switch (item.name) {
             case AGED_BRIE:
                 increaseQuality(item, BRIE_INCREMENT);
                 break;
             case BACKSTAGE_PASSES:
-                item.quality = MIN_QUALITY;
+                if (expired) {
+                    item.quality = MIN_QUALITY;
+                } else {
+                    increaseQuality(item, passesIncrement(item.sellIn));
+                }
                 break;
             default:
                 decreaseQuality(item, degradeRate(item));

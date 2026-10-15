@@ -31,13 +31,15 @@ class GildedRose {
         }
     }
 
-    private void updateItem(Item item) {
-        if (isLegendary(item)) {
+        private void updateItem(Item item) {
+        if (item == null || item.name == null || isLegendary(item)) {
             return;
         }
 
         applyDailyChange(item);
-        item.sellIn--;
+        if (item.sellIn > Integer.MIN_VALUE) {
+            item.sellIn--;
+        }
         if (isExpired(item)) {
             applyExpiryChange(item);
         }
